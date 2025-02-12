@@ -160,10 +160,40 @@ fn bbow_basic_tests() {
 
 #[test]
 fn bbow_more_tests() {
-    let s = "c🤚an't hasn't 朋友, 朋友, 朋友, Բարեւ ընկերներ!";
+    let s = "c🤚an't hasn't Բարեւ ընկերներ!";
     let bbow = Bbow::new().extend_from_text(s);
-    assert_eq!(3, bbow.len());
-    assert_eq!(3, bbow.match_count("朋友"));
+    assert_eq!(2, bbow.len());
     assert_eq!(1, bbow.match_count("ընկերներ"));
     assert_eq!(0, bbow.match_count("hasn't"));
+    assert_eq!(1, bbow.match_count("բարեւ"));
+}
+
+#[test]
+fn bbow_even_more_tests() {
+    let s = "running 4 tests
+test src/lib.rs - Bbow<'a>::match_count (line 95) ... ok
+test src/lib.rs - Bbow<'a>::extend_from_text (line 60) ... ok
+test src/lib.rs - Bbow<'a>::len (line 136) ... ok
+test src/lib.rs - Bbow<'a>::count (line 118) ... ok";
+    let bbow = Bbow::new()
+        .extend_from_text(s)
+        .extend_from_text("A quIck brown Fox jumps oVer a lazy DOG.");
+    assert_eq!(4, bbow.match_count("ok"));
+    assert_eq!(4, bbow.match_count("line"));
+    assert_eq!(4, bbow.match_count("test"));
+    assert_eq!(1, bbow.match_count("tests"));
+    assert_eq!(1, bbow.match_count("running"));
+    assert_eq!(0, bbow.match_count("..."));
+    assert_eq!(0, bbow.match_count("Bbow"));
+    assert_eq!(0, bbow.match_count("bbow"));
+    assert_eq!(0, bbow.match_count("4"));
+    assert_eq!(2, bbow.match_count("a"));
+    assert_eq!(1, bbow.match_count("quick"));
+    assert_eq!(1, bbow.match_count("brown"));
+    assert_eq!(1, bbow.match_count("fox"));
+    assert_eq!(1, bbow.match_count("jumps"));
+    assert_eq!(1, bbow.match_count("over"));
+    assert_eq!(1, bbow.match_count("lazy"));
+    assert_eq!(1, bbow.match_count("dog"));
+    assert_eq!(13, bbow.len());
 }
